@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "668782306511",
+    "project_id": "medical-internship-boumerdes",
+    "storage_bucket": "medical-internship-boumerdes.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:668782306511:android:c386494936f622f1e643ba",
+        "android_client_info": {
+          "package_name": "com.example.med"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7Le7EDZfWDWlTiYRVR0O2WONTxRg0GzY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:668782306511:android:ceaa86d2d540a3f3e643ba",
+        "android_client_info": {
+          "package_name": "com.example.medecine"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7Le7EDZfWDWlTiYRVR0O2WONTxRg0GzY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:668782306511:android:77f2452d6a8f2f6ce643ba",
+        "android_client_info": {
+          "package_name": "com.example.stageetudiant"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7Le7EDZfWDWlTiYRVR0O2WONTxRg0GzY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
