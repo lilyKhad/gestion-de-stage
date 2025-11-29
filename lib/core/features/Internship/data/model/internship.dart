@@ -9,7 +9,9 @@ class InternshipModel extends Internship {
     required String doctorName,
     required String hospital,
     required DateTime startDate,
+    required String duree,
     String? notes,
+    
   }) : super(
           id: id,
           department: department,
@@ -17,6 +19,7 @@ class InternshipModel extends Internship {
           hospital: hospital,
           startDate: startDate,
           notes: notes,
+          duree: duree,
         );
 
   factory InternshipModel.fromEntity(Internship internship) {
@@ -27,6 +30,7 @@ class InternshipModel extends Internship {
       hospital: internship.hospital,
       startDate: internship.startDate,
       notes: internship.notes,
+      duree: internship.duree,
     );
   }
 }

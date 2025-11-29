@@ -3,16 +3,17 @@ import 'package:dartz/dartz.dart';
 import 'package:med/core/errors/failures.dart';
 import 'package:med/core/features/etudiant/domain/entities/etudiant.dart';
 import 'package:med/core/features/etudiant/domain/repositories/etudiant_repository.dart';
-import 'package:med/core/usecase/usecase.dart';
+
+// lib/core/features/etudiant/domain/usecases/get_student.dart
 
 
-class UpdateStudentUseCase implements UseCase<Student, Student> {
+
+class GetStudentUseCase {
   final StudentRepository repository;
 
-  UpdateStudentUseCase(this.repository);
+  GetStudentUseCase(this.repository);
 
-  @override
-  Future<Either<Failure, Student>> call(Student student) async {
-    return await repository.updateStudent(student);
+  Future<Either<Failure, Student>> call(String studentId) async {
+    return await repository.getStudent(studentId);
   }
 }

@@ -7,6 +7,8 @@ import 'package:med/core/features/Internship/domain/repository/internship_repo.d
 import 'package:med/core/features/Internship/domain/usecases/getInternshi.dart';
 import 'package:med/core/features/Internship/domain/usecases/searchUsecase.dart';
 import 'package:riverpod/riverpod.dart';
+import 'package:collection/collection.dart';
+
 
 // Firebase Provider
 final firebaseFirestoreProvider = Provider<FirebaseFirestore>((ref) {
@@ -58,3 +60,21 @@ final searchInternshipsProvider = FutureProvider.family<List<Internship>, String
   }).toList();
 });
 
+final internshipByIdProvider = FutureProvider.family<Internship?, String>((ref, internshipId) async {
+  final getInternships = ref.read(getInternshipsUseCaseProvider);
+  final internships = await getInternships();
+  
+  print('🔍 Looking for internship with ID: $internshipId');
+  print('📊 Total internships available: ${internships.length}');
+  print('📋 Available internship IDs: ${internships.map((i) => i.id).toList()}');
+  
+  final internship = internships.firstWhereOrNull((i) => i.id == internshipId);
+  
+  if (internship == null) {
+    print('❌ Internship not found for ID: $internshipId');
+  } else {
+    print('✅ Found internship: ${internship.department} at ${internship.hospital}');
+  }
+  
+  return internship;
+});

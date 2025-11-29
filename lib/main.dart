@@ -1,9 +1,9 @@
-// main.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:intl/date_symbol_data_local.dart'; // << Add this
+import 'package:med/core/routers/router.dart';
 import 'firebase_options.dart';
-import 'package:med/core/features/Internship/presentation/internship_list_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,6 +12,9 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  // ✅ Initialize French date formatting
+  await initializeDateFormatting('fr_FR');
+
   runApp(
     const ProviderScope(
       child: MyApp(),
@@ -19,19 +22,21 @@ void main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class MyApp extends ConsumerWidget {
+  const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Cardiologie CHUO',
+  Widget build(BuildContext context, WidgetRef ref) {
+    final router = ref.watch(goRouterProvider);
+
+    return MaterialApp.router(
+      title: 'Med Stage',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+        useMaterial3: true,
       ),
-      home: const InternshipListScreen(),
+      routerConfig: router,
+      debugShowCheckedModeBanner: false,
     );
   }
 }

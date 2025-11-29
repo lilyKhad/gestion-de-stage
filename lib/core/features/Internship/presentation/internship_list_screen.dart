@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:med/core/features/Internship/presentation/internship_card.dart';
 
 import 'package:med/core/features/Internship/providers/ineternship_provider.dart';
-import 'package:med/core/features/etudiant/presentation/appbare.dart';
+import 'package:med/core/features/etudiant/presentation/widgets/appbare.dart';
 
 class InternshipListScreen extends ConsumerStatefulWidget {
   const InternshipListScreen({super.key});
@@ -23,6 +23,7 @@ class _InternshipListScreenState extends ConsumerState<InternshipListScreen> {
         ref.watch(searchInternshipsProvider(_searchQuery));
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppbarEtudiant(),
       body: Column(
         children: [

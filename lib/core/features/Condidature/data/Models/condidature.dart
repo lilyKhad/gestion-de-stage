@@ -1,114 +1,128 @@
-// data/models/condidature_model.dart
 import 'package:med/core/features/Condidature/domain/entity/condidature.dart';
-
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CondidatureModel extends CondidatureEntity {
   CondidatureModel({
     required String id,
+    required String internshipId,
+    
     required String department,
     required String doctorName,
     required String hospital,
-    required DateTime startDate,
     required String niveauStage,
     required String duree,
     required List<String> objectifs,
     required List<String> competences,
+    required DateTime startDate,
     required String? imageUrl,
-    required String internshipId,
+    required CondidatureStatus status,
   }) : super(
           id: id,
+          internshipId: internshipId,
           department: department,
           doctorName: doctorName,
           hospital: hospital,
-          startDate: startDate,
           niveauStage: niveauStage,
           duree: duree,
           objectifs: objectifs,
           competences: competences,
+          startDate: startDate,
           imageUrl: imageUrl,
-          internshipId: internshipId,
+          status: status,
         );
 
-  // Convert from Entity to Model
+  // Convert domain Entity → Model
   factory CondidatureModel.fromEntity(CondidatureEntity entity) {
     return CondidatureModel(
       id: entity.id,
+      internshipId: entity.internshipId,
       department: entity.department,
       doctorName: entity.doctorName,
       hospital: entity.hospital,
-      startDate: entity.startDate,
       niveauStage: entity.niveauStage,
       duree: entity.duree,
       objectifs: List<String>.from(entity.objectifs),
       competences: List<String>.from(entity.competences),
-      imageUrl: entity.imageUrl, 
-      internshipId: entity.internshipId,
+      startDate: entity.startDate,
+      imageUrl: entity.imageUrl,
+      status: entity.status,
     );
   }
 
-  // Convert from Map (Firebase) to Model
+  // Convert Firebase Map → Model
   factory CondidatureModel.fromMap(Map<String, dynamic> map) {
-    return CondidatureModel(
-      id: map['id'] ?? '',
-      department: map['department'] ?? '',
-      doctorName: map['doctorName'] ?? '',
-      hospital: map['hospital'] ?? '',
-      startDate: DateTime.fromMillisecondsSinceEpoch(
-        map['startDate'] ?? DateTime.now().millisecondsSinceEpoch,
-      ),
-      niveauStage: map['niveauStage'] ?? '',
-      duree: map['duree'] ?? '',
-      objectifs: List<String>.from(map['objectifs'] ?? []),
-      competences: List<String>.from(map['competences'] ?? []),
-      imageUrl: map['imageUrl'], internshipId: map['internshipId']?? '',
-    );
-  }
+  return CondidatureModel(
+    id: map['id']?.toString() ?? '',
+    internshipId: map['internshipId']?.toString() ?? '',
+    department: map['department']?.toString() ?? '',
+    doctorName: map['doctorName']?.toString() ?? '',
+    hospital: map['hospital']?.toString() ?? '',
+    startDate: map['startDate'] is int
+        ? DateTime.fromMillisecondsSinceEpoch(map['startDate'])
+        : map['startDate'] is Timestamp
+            ? map['startDate'].toDate()
+            : DateTime.now(), // fallback si manquant
+    niveauStage: map['niveauStage']?.toString() ?? '',
+    duree: map['duree']?.toString() ?? '',
+    objectifs: List<String>.from(map['objectifs'] ?? []),
+    competences: List<String>.from(map['competences'] ?? []),
+    imageUrl: map['imageUrl']?.toString(),
+    status: map['status'] != null
+        ? CondidatureStatus.values.firstWhere(
+            (e) => e.name == map['status'],
+            orElse: () => CondidatureStatus.pending,
+          )
+        : CondidatureStatus.pending,
+  );
+}
 
-  // Convert Model to Map for Firebase
+
+  // Convert Model → Firebase Map
   Map<String, dynamic> toMap() {
     return {
       'id': id,
+      'internshipId': internshipId,
       'department': department,
       'doctorName': doctorName,
       'hospital': hospital,
-      'startDate': startDate.millisecondsSinceEpoch,
       'niveauStage': niveauStage,
       'duree': duree,
       'objectifs': objectifs,
       'competences': competences,
+      'startDate': startDate,
       'imageUrl': imageUrl,
-      'internshipId':internshipId,
+      'status': status.name, // enum → string
     };
   }
 
-  // Copy with method
   @override
   CondidatureModel copyWith({
     String? id,
+    String? internshipId,
     String? department,
     String? doctorName,
     String? hospital,
-    DateTime? startDate,
     String? niveauStage,
     String? duree,
     List<String>? objectifs,
     List<String>? competences,
+    DateTime? startDate,
     String? imageUrl,
-    String? internshipId,
+    CondidatureStatus? status,
   }) {
     return CondidatureModel(
       id: id ?? this.id,
+      internshipId: internshipId ?? this.internshipId,
       department: department ?? this.department,
       doctorName: doctorName ?? this.doctorName,
       hospital: hospital ?? this.hospital,
-      startDate: startDate ?? this.startDate,
       niveauStage: niveauStage ?? this.niveauStage,
       duree: duree ?? this.duree,
       objectifs: objectifs ?? List<String>.from(this.objectifs),
       competences: competences ?? List<String>.from(this.competences),
+      startDate: startDate ?? this.startDate,
       imageUrl: imageUrl ?? this.imageUrl,
-      internshipId: internshipId ?? this.internshipId,
+      status: status ?? this.status,
     );
   }
 
@@ -116,38 +130,35 @@ class CondidatureModel extends CondidatureEntity {
   CondidatureEntity toEntity() {
     return CondidatureEntity(
       id: id,
+      internshipId: internshipId,
       department: department,
       doctorName: doctorName,
       hospital: hospital,
-      startDate: startDate,
       niveauStage: niveauStage,
       duree: duree,
-      objectifs: List<String>.from(objectifs),
-      competences: List<String>.from(competences),
-      imageUrl: imageUrl, 
-      internshipId: internshipId,
+      objectifs: objectifs,
+      competences: competences,
+      startDate: startDate,
+      imageUrl: imageUrl,
+      status: status,
     );
   }
 
-  // Empty model
+  // Empty
   factory CondidatureModel.empty() {
     return CondidatureModel(
       id: '',
+      internshipId: '',
       department: '',
       doctorName: '',
       hospital: '',
-      startDate: DateTime.now(),
       niveauStage: '',
       duree: '',
       objectifs: [],
       competences: [],
+      startDate: DateTime.now(),
       imageUrl: null,
-      internshipId: '',
+      status: CondidatureStatus.pending,
     );
-  }
-
-  @override
-  String toString() {
-    return 'CondidatureModel{id: $id, department: $department, doctorName: $doctorName, hospital: $hospital, startDate: $startDate, niveauStage: $niveauStage, duree: $duree, objectifs: $objectifs, competences: $competences, imageUrl: $imageUrl,internshipId: $internshipId}';
   }
 }

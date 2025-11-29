@@ -1,5 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+enum CondidatureStatus {
+  added,
+  pending,
+  accepted,
+  rejected,
+  validated,
+}
+
 class CondidatureEntity {
   final String id;
   final String internshipId;
@@ -12,6 +20,7 @@ class CondidatureEntity {
   final List<String> competences;
   final DateTime startDate;
   final String? imageUrl;
+  final CondidatureStatus status;
 
   CondidatureEntity({
     required this.id,
@@ -25,6 +34,7 @@ class CondidatureEntity {
     required this.competences,
     required this.startDate,
     required this.imageUrl,
+    required this.status,
   });
 
   factory CondidatureEntity.fromMap(Map<String, dynamic> map) {
@@ -42,6 +52,12 @@ class CondidatureEntity {
           ? (map['startDate'] as Timestamp).toDate()
           : DateTime.tryParse(map['startDate'] ?? '') ?? DateTime.now(),
       imageUrl: map['imageUrl'],
+      
+      // Convertir string → enum
+      status: CondidatureStatus.values.firstWhere(
+        (e) => e.toString() == 'CondidatureStatus.${map['status']}',
+        orElse: () => CondidatureStatus.added,
+      ),
     );
   }
 
@@ -56,12 +72,14 @@ class CondidatureEntity {
       'duree': duree,
       'objectifs': objectifs,
       'competences': competences,
-      'startDate': startDate, // Firestore handles DateTime automatically
+      'startDate': startDate,
       'imageUrl': imageUrl,
+
+      //  enum → string
+      'status': status.name,
     };
   }
 
-  // Copy with method for updates
   CondidatureEntity copyWith({
     String? id,
     String? internshipId,
@@ -74,6 +92,7 @@ class CondidatureEntity {
     List<String>? objectifs,
     List<String>? competences,
     String? imageUrl,
+    CondidatureStatus? status,
   }) {
     return CondidatureEntity(
       id: id ?? this.id,
@@ -87,21 +106,7 @@ class CondidatureEntity {
       objectifs: objectifs ?? this.objectifs,
       competences: competences ?? this.competences,
       imageUrl: imageUrl ?? this.imageUrl,
+      status: status ?? this.status,
     );
-  }
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is CondidatureEntity &&
-          runtimeType == other.runtimeType &&
-          id == other.id;
-
-  @override
-  int get hashCode => id.hashCode;
-
-  @override
-  String toString() {
-    return 'CondidatureEntity{id: $id, internshipId: $internshipId, department: $department, doctorName: $doctorName, hospital: $hospital, startDate: $startDate, niveauStage: $niveauStage, duree: $duree, objectifs: $objectifs, competences: $competences, imageUrl: $imageUrl}';
   }
 }

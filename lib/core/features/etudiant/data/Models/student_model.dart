@@ -1,55 +1,55 @@
-// lib/data/models/student_model.dart
+import 'package:med/core/enums/roles.dart';
 import 'package:med/core/features/etudiant/domain/entities/etudiant.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class StudentModel extends Student {
-  const StudentModel({
-    required String id,
-    required String email,
-    required String nom,
-    required String prenom,
-    String? phone,
-    String? adresse,
-    String? annee,
-    String? universite,
-    String? birthday,
-    String? photoUrl,
-    List<String> documents = const [],
-    bool isProfileComplete = false,
-  }) : super(
-          id: id,
-          email: email,
-          nom: nom,
-          prenom: prenom,
-          phone: phone,
-          adresse: adresse,
-          annee: annee,
-          universite: universite,
-          birthday: birthday,
-          photoUrl: photoUrl,
-          documents: documents,
-          isProfileComplete: isProfileComplete,
-        );
+  StudentModel({
+    required super.id,
+    required super.email,
+    required super.nom,
+    required super.prenom,
+    required super.phone,
+    required super.adresse,
+    required super.annee,
+    required super.universite,
+    required super.birthday,
+    required super.photoUrl,
+    required super.documents,
+    required super.role,
+  });
 
-  factory StudentModel.fromJson(Map<String, dynamic> json, String id) {
+  /// Convert Firestore map → StudentModel
+  factory StudentModel.fromMap(Map<String, dynamic> map) {
     return StudentModel(
-      id: id,
-      email: json['email'] ?? '',
-      nom: json['nom'] ?? '',
-      prenom: json['prenom'] ?? '',
-      phone: json['phone'],
-      adresse: json['adresse'],
-      annee: json['annee'],
-      universite: json['universite'],
-      birthday: json['birthday'],
-      photoUrl: json['photoUrl'],
-      documents: List<String>.from(json['documents'] ?? []),
-      isProfileComplete: json['isProfileComplete'] ?? false,
+      id: map['id'] ?? '',
+      email: map['email'] ?? '',
+      nom: map['nom'] ?? '',
+      prenom: map['prenom'] ?? '',
+      phone: map['phone'] ?? '',
+      adresse: map['adresse'] ?? '',
+      annee: map['annee'] ?? '',
+      universite: map['universite'] ?? '',
+
+      ///  Convert Timestamp to string
+      birthday: map['birthday'] is Timestamp
+          ? (map['birthday'] as Timestamp).toDate().toIso8601String()
+          : (map['birthday'] ?? ''),
+
+       photoUrl: map['photoUrl']?.toString().trim() ?? '',       // default empty string
+       documents: List<String>.from(map['documents'] ?? []),  // default empty list
+
+
+      ///  Handle role safely
+      role: map['role'] != null
+          ? Student.roleFromString(map['role'])
+          : UserRole.etudiant,
     );
   }
 
-  Map<String, dynamic> toJson() {
+  /// Convert StudentModel → Firestore map
+  Map<String, dynamic> toMap() {
     return {
+      'id': id,
       'email': email,
       'nom': nom,
       'prenom': prenom,
@@ -60,25 +60,7 @@ class StudentModel extends Student {
       'birthday': birthday,
       'photoUrl': photoUrl,
       'documents': documents,
-      'isProfileComplete': isProfileComplete,
-      'role': 'etudiant', // Always set role for students
+      'role': role.name,
     };
-  }
-
-  factory StudentModel.fromEntity(Student student) {
-    return StudentModel(
-      id: student.id,
-      email: student.email,
-      nom: student.nom,
-      prenom: student.prenom,
-      phone: student.phone,
-      adresse: student.adresse,
-      annee: student.annee,
-      universite: student.universite,
-      birthday: student.birthday,
-      photoUrl: student.photoUrl,
-      documents: student.documents,
-      isProfileComplete: student.isProfileComplete,
-    );
   }
 }

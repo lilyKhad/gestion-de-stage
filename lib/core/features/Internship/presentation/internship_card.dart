@@ -4,7 +4,7 @@ import 'package:med/core/features/Internship/domain/entity/internship.dart';
 
 class InternshipCard extends StatelessWidget {
   final Internship internship;
-
+  
   const InternshipCard({super.key, required this.internship});
 
   @override
@@ -39,14 +39,7 @@ class InternshipCard extends StatelessWidget {
         child: Row(
           children: [
             // Image section
-            Container(
-              height: double.infinity,
-              width: size.width * 0.15, // smaller image
-              decoration: BoxDecoration(
-                color: Colors.red,
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
+            _buildInternshipImage(size),
             const SizedBox(width: 8),
       
             // Details column
@@ -86,8 +79,9 @@ class InternshipCard extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) =>
-                                  CondidatureDetailScreen(internshipId: internship.id),
+                              builder: (_) => CondidatureDetailScreen(
+                                internshipId: internship.id,
+                              ),
                             ),
                           );
                         },
@@ -124,6 +118,52 @@ class InternshipCard extends StatelessWidget {
     );
   }
 
+  Widget _buildInternshipImage(Size size) {
+    // Check if internship has a valid picture
+    final hasValidPicture = internship.pictureUrl != null && 
+                           internship.pictureUrl!.isNotEmpty &&
+                           internship.pictureUrl!.startsWith('http');
+
+    return Container(
+      height: double.infinity,
+      width: size.width * 0.15, // smaller image
+      decoration: BoxDecoration(
+        color: hasValidPicture ? Colors.transparent : Colors.red, // Only red if no image
+        borderRadius: BorderRadius.circular(8),
+        image: hasValidPicture ? DecorationImage(
+          image: NetworkImage(internship.pictureUrl!),
+          fit: BoxFit.cover,
+        ) : null,
+      ),
+      child: hasValidPicture ? null : _buildDefaultImageContent(),
+    );
+  }
+
+  Widget _buildDefaultImageContent() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          Icons.medical_services,
+          color: Colors.white,
+          size: 24, // smaller icon
+        ),
+        const SizedBox(height: 4),
+        Text(
+          internship.department.length > 10 
+            ? '${internship.department.substring(0, 10)}...' 
+            : internship.department,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 10, // smaller font
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+
   String _formatDate(DateTime date) {
     final day = date.day;
     final month = _getMonthName(date.month);
@@ -132,8 +172,8 @@ class InternshipCard extends StatelessWidget {
 
   String _getMonthName(int month) {
     const months = [
-      'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-      'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+      'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin',
+      'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'
     ];
     return months[month - 1];
   }

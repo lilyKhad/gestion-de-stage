@@ -38,6 +38,7 @@ class InternshipRemoteDataSource {
       doctorName: data['doctorName'] ?? '',
       hospital: data['hospital'] ?? '',
       startDate: (data['startDate'] as Timestamp).toDate(),
+      duree: data['duree'],
       notes: data['notes'],
     );
   }
