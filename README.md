@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # med
 
 A new Flutter project.
@@ -14,3 +15,6 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+=======
+# Application-de-gestion-des-stages-des-tudiants-en-m-decine.
+>>>>>>> 1d7ae956e43a9d1ec77ad2dbb33f3cf0d4fd16c9
