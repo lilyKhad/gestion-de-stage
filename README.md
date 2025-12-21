@@ -42,27 +42,6 @@ The project follows **Clean Architecture**:
 
 ```
 
-lib/
-│
-├── core/
-│   ├── Theme/
-│   ├── constants/
-│   ├── errors/
-│   ├── routers/
-│   ├── utils/
-│   └── connection/
-│
-├── features/
-│   ├── auth/
-│   ├── etudiant/
-│   ├── doctor/
-│   ├── Internship/
-│   ├── application/
-│   ├── doyenn/
-│   ├── Établissements/
-│   └── acceuilFeature/
-│
-└── widgets/
 
 ````
 
@@ -131,16 +110,6 @@ flutter run
    * Storage
 
 ---
-
-## 📸 Screens (Optional)
-
-> You can add screenshots here later
-> Example:
-
-```
-/screenshots/login.png
-/screenshots/dashboard.png
-```
 
 ---
 
