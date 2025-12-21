@@ -1,6 +1,6 @@
 enum UserRole {
   etudiant,
-  medcin,
+  medecin,
   doyen,
-  etablissement
+  hopital,
 }

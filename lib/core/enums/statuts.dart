@@ -1,0 +1,1 @@
+enum InternshipStatus { pending, accepted, rejected }

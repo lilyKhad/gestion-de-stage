@@ -37,6 +37,13 @@ dependencies:
   googleapis: ^15.0.0
   google_sign_in: ^7.2.0
   extension_google_sign_in_as_googleapis_auth: ^3.0.0
+  dio: ^5.9.0
+  flutter_map: ^8.2.2
+  latlong2: ^0.9.1
+  image_picker: ^1.2.1
+  url_launcher: ^6.2.0
+  fl_chart: ^1.1.1
+  google_fonts: ^6.3.3
   # replaces deprecated data_connection_checker
 
 dev_dependencies:
@@ -46,3 +53,9 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  
+  # Assets configuration
+  assets:
+    - assets/Logo/
+    - assets/Apropos/femme.png
+    - assets/Apropos/etudiante.jpg

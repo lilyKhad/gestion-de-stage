@@ -1,86 +1,138 @@
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:med/core/features/Internship/presentation/internship_list_screen.dart';
-import 'package:med/core/features/auth/presentation/login.dart';
-import 'package:med/core/features/auth/provider/loginProviders.dart';
-import 'package:med/core/features/etudiant/presentation/student_profile_screen.dart';
-
+import 'package:med/features/%C3%89tablissements/presentation/HospitalDashboard.dart';
+import 'package:med/features/%C3%89tablissements/presentation/create_internship.dart';
+import 'package:med/features/Internship/presentation/list_cards.dart';
+import 'package:med/features/acceuilFeature/presenation/acceuil.dart';
+import 'package:med/features/acceuilFeature/presenation/apropos.dart';
+import 'package:med/features/acceuilFeature/presenation/contact.dart';
+import 'package:med/features/auth/presentation/login.dart';
+import 'package:med/features/auth/provider/loginProviders.dart';
+import 'package:med/features/doctor/presentation/doctormain.dart';
+import 'package:med/features/doyen/presentation/admin.dart';
+import 'package:med/features/etudiant/presentation/student_profile_screen.dart';
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
-    initialLocation: '/login',
+    initialLocation: '/',
     redirect: (context, state) {
       final authState = ref.watch(authStateProvider);
-      final isAuthenticated = authState.value != null;
-      final isLoggingIn = state.uri.toString() == '/login';
       final user = authState.value;
+      final isAuthenticated = user != null;
 
-      // If user is not authenticated and trying to access protected route
-      if (!isAuthenticated && !isLoggingIn) {
+      final path = state.uri.toString();
+
+      print('--- REDIRECT DEBUG ---');
+      print('Requested path: $path');
+      print('Authenticated: $isAuthenticated');
+      print('User role: ${user?.role}');
+      print('Is public route: ${_isPublicRoute(path)}');
+
+      // 🔒 NOT AUTHENTICATED
+      if (!isAuthenticated && !_isPublicRoute(path)) {
+        print('🔒 NOT AUTHENTICATED → /login');
         return '/login';
       }
 
-      // If user is authenticated and trying to access login
-      if (isAuthenticated && isLoggingIn) {
-         return _getRouteForRole(user!.role);
+      // ✅ AUTHENTICATED → redirect root only
+      if (isAuthenticated && path == '/') {
+        final roleRoute = _getRouteForRole(user.role);
+        print('🔁 AUTH → $roleRoute');
+        return roleRoute;
       }
 
-      // No redirect needed
+      print('✔️ NO REDIRECT');
       return null;
     },
     routes: [
-      // Login route
+      // ---------------- PUBLIC ----------------
+      GoRoute(
+        path: '/',
+        name: 'accueil',
+        builder: (context, state) => const AccueilScreen(),
+        routes: [
+          GoRoute(
+            path: 'apropos',
+            name: 'apropos',
+            builder: (context, state) => const AproposScreen(),
+          ),
+          GoRoute(
+            path: 'contact',
+            name: 'contact',
+            builder: (context, state) => const ContactScreen(),
+          ),
+        ],
+      ),
       GoRoute(
         path: '/login',
         name: 'login',
-        builder: (context, state) =>  LoginScreen(),
+        builder: (context, state) => const LoginScreen(),
       ),
 
-      // Protected routes
+      // ---------------- MEDCIN ----------------
       GoRoute(
-        path: '/student',
-        name: 'student',
+        path: '/medecin',
+        name: 'medecin',
+        builder: (context, state) => const DashboardBody(),
+      ),
+      ///-----------Admin--------------
+       GoRoute(
+        path: '/admin',
+        name: 'admin',
+        builder: (context, state) => const DeanDashboardScreen(),
+      ),
+
+      // ---------------- ETUDIANT ----------------
+      GoRoute(
+        path: '/etudiant',
+        name: 'etudiant',
         builder: (context, state) => const StudentProfileScreen(),
       ),
-       GoRoute(
-         path: '/stage',
-         name: 'stage',
-         builder: (context, state) => const InternshipListScreen(),
-       ),
-      // GoRoute(
-      //   path: '/admin',
-      //   name: 'admin',
-      //   builder: (context, state) => const AdminDashboardScreen(),
-      // ),
-      // GoRoute(
-      //   path: '/home',
-      //   name: 'home',
-      //   builder: (context, state) => const HomeScreen(),
-      // ),
 
-      // // Redirect root to login
-      // GoRoute(
-      //   path: '/',
-      //   redirect: (state) => '/login',
-      // ),
+      // ---------------- STAGE ----------------
+      GoRoute(
+        path: '/stage',
+        name: 'stage',
+        builder: (context, state) => const InternshipListScreen(),
+      ),
+
+      // ---------------- HÔPITAL ----------------
+      GoRoute(
+        path: '/hopital',
+        name: 'hopital',
+        builder: (context, state) => const HospitalDashboard(),
+        routes: [
+          GoRoute(
+            path: 'create',
+            name: 'create_internship',
+            builder: (context, state) =>
+                const CreateInternshipScreen(hospitalName: "Chargement..."),
+          ),
+        ],
+      ),
     ],
-    // errorBuilder: (context, state) => Scaffold(
-    //   body: Center(
-    //     child: Text('Page not found: ${state.location}'),
-    //   ),
-    // ),
   );
 });
+bool _isPublicRoute(String path) {
+  return path == '/' ||
+      path.startsWith('/login') ||
+      path.startsWith('/apropos') ||
+      path.startsWith('/contact');
+}
 
 String _getRouteForRole(String role) {
   switch (role.toLowerCase()) {
     case 'etudiant':
-      return '/student';
-    case 'professeur':
-      return '/teacher';
+      return '/etudiant';
+    case 'medecin':
+      return '/medecin';
     case 'admin':
+    case 'doyen':  // <--- Pour correspondre à votre base de données
       return '/admin';
+    case 'hopital':
+    case 'epsp':
+      return '/hopital';
     default:
-      return '/home';
+      return '/';
   }
 }
